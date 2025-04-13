@@ -58,23 +58,42 @@ secrethor-cli secrets search my-secret-name --namespace all
 ## Example Output
 
 ```
-Secrethor CLI Orphan Report - Version v0.0.1
+ _____                      _    _
+|   __| ___  ___  ___  ___ | |_ | |_  ___  ___
+|__   || -_||  _||  _|| -_||  _||   || . ||  _|
+|_____||___||___||_|  |___||_|  |_|_||___||_|
+
+ Secrethor-CLI - Version v0.0.1
+
 
 In-use Secrets
-NAMESPACE        NAME                 USED BY
---------------   ------------------   ---------------------------------------------
-  default         db-credentials       Deployments/backend-api
+  NAMESPACE              NAME                  USED BY                                                                                                                                                      
+                                                                                                                                                                                                            
+  🔒  mongo              my-mongo-db-config    StatefulSets/my-mongo-db, StatefulSets/my-mongo-db-arb, Pods/my-mongo-db-0, Pods/my-mongo-db-1, Pods/my-mongo-db-2                                           
+  🔒  secrethor-system   webhook-server-cert   Deployments/controller-manager, ReplicaSets/controller-manager-54486fd57, ReplicaSets/controller-manager-9d64b7c76, Pods/controller-manager-54486fd57-tcwd9  
 
 Orphaned Secrets
-NAMESPACE        NAME
---------------   ------------------
-  default         unused-token
-  dev             staging-api-secret
+  NAMESPACE          NAME                                      
+                                                               
+  ❗  cert-manager   cert-manager-webhook-ca                   
+  ❗  default        allowed-secret                            
+  ❗  default        both-ok                                   
+  ❗  default        only-password                             
+  ❗  default        only-username                             
+  ❗  default        totally-unused                            
+  ❗  dev            test-secret                               
+  ❗  dev            test-secret1                              
+  ❗  mongo          my-mongo-db-admin-my-user                 
+  ❗  mongo          my-mongo-db-agent-password                
+  ❗  mongo          my-mongo-db-keyfile                       
+  ❗  mongo          my-user-password                          
+  ❗  mongo          my-user-scram-scram-credentials           
+  ❗  mongo          sh.helm.release.v1.community-operator.v1  
 
 Summary
-Secrets in total:   3
-Secrets in use:     1
-Orphaned secrets:   2
+🔑  Secrets in total:   16
+🔒  Secrets in use:     2
+❗  Orphaned secrets:   14
 ```
 
 ---
