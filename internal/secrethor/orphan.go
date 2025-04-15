@@ -27,7 +27,7 @@ type OrphanedSecret struct {
 }
 
 func Check(namespace string, output string, verbose bool) error {
-	PrintBanner(version)
+	PrintBanner()
 	config, err := clientcmd.BuildConfigFromFlags("", clientcmd.RecommendedHomeFile)
 	if err != nil {
 		return fmt.Errorf("failed to build kubeconfig: %v", err)
@@ -185,7 +185,8 @@ func Check(namespace string, output string, verbose bool) error {
 		fmt.Println("\nIn-use Secrets")
 		table := tablewriter.NewWriter(os.Stdout)
 		table.SetHeader([]string{"NAMESPACE", "NAME", "USED BY"})
-		table.SetAutoWrapText(false)
+		table.SetAutoWrapText(true)
+		table.SetColWidth(140)
 		table.SetBorder(false)
 		table.SetRowSeparator(" ")
 		table.SetCenterSeparator(" ")
@@ -194,6 +195,7 @@ func Check(namespace string, output string, verbose bool) error {
 		table.SetColumnAlignment([]int{tablewriter.ALIGN_LEFT, tablewriter.ALIGN_LEFT, tablewriter.ALIGN_LEFT})
 		for _, s := range usedList {
 			table.Append([]string{s.Namespace, s.Name, strings.Join(s.UsedBy, ", ")})
+			table.Append([]string{" ", " ", " "})
 		}
 		table.Render()
 	}

@@ -11,7 +11,7 @@ import (
 )
 
 func SearchSecret(name string, namespace string) error {
-	PrintBanner(version)
+	PrintBanner()
 	config, err := clientcmd.BuildConfigFromFlags("", clientcmd.RecommendedHomeFile)
 	if err != nil {
 		return fmt.Errorf("failed to build kubeconfig: %v", err)
