@@ -1,14 +1,32 @@
 # Secrethor CLI
 
 
-
-
-
-
-
 Secrethor CLI is a Kubernetes secret auditing tool that complements the [Secrethor Operator](https://github.com/miltlima/secrethor).
 
 ---
+## Core Functionalities
+
+### 1. Secret Scanning
+- **Orphaned Secret Detection**: 
+  - Automatically identifies secrets not used by any workload
+  - Scans across all Kubernetes workload types:
+    - Deployments
+    - StatefulSets
+    - DaemonSets
+    - ReplicaSets
+    - CronJobs
+    - Jobs
+    - Pods
+  - Provides clear visual indicators (🔒 for used, ❗ for orphaned)
+
+### 2. Secret Search
+- **Cross-Namespace Search**:
+  - Find secrets by name across all namespaces
+  - Detailed information display:
+    - ✅ Secret location (namespace/name)
+    - 🔐 Secret type
+    - 📦 Available data keys
+  - Supports single namespace or all-namespace search
 
 ## Features
 
@@ -16,8 +34,21 @@ Secrethor CLI is a Kubernetes secret auditing tool that complements the [Secreth
 - Search for Secrets by name across namespaces
 - Clean, structured output
 - JSON/YAML export support
-- Ess
 
+
+## Workload Coverage
+
+Secrethor CLI scans for secrets used in:
+
+| Workload Type | Secret References Checked |
+|---------------|-------------------------|
+| Deployments   | - Environment variables<br>- Volume mounts<br>- Image pull secrets |
+| StatefulSets  | - Environment variables<br>- Volume mounts<br>- Image pull secrets |
+| DaemonSets    | - Environment variables<br>- Volume mounts<br>- Image pull secrets |
+| ReplicaSets   | - Environment variables<br>- Volume mounts<br>- Image pull secrets |
+| CronJobs      | - Environment variables<br>- Volume mounts<br>- Image pull secrets |
+| Jobs          | - Environment variables<br>- Volume mounts<br>- Image pull secrets |
+| Pods          | - Environment variables<br>- Volume mounts<br>- Image pull secrets |
 ---
 
 ## Installation
@@ -37,14 +68,6 @@ go build -o secrethor-cli main.go
 ```
 
 ---
-
-## Usage
-
-```bash
-secrethor-cli secrets orphan --namespace default
-secrethor-cli secrets search my-secret-name --namespace all
-```
-
 ### Flags
 
 | Flag          | Description                                       |
@@ -54,6 +77,45 @@ secrethor-cli secrets search my-secret-name --namespace all
 | `--verbose`   | Enable detailed scan output                       |
 
 ---
+
+## Usage Examples
+
+### Scan for Orphaned Secrets
+```bash
+# Scan all namespaces
+secrethor-cli secrets orphan --namespace all
+
+# Scan specific namespace
+secrethor-cli secrets orphan --namespace default
+
+# With verbose output
+secrethor-cli secrets orphan --namespace all --verbose
+
+# With different output format
+secrethor-cli secrets orphan --namespace all --output json
+```
+
+### Search for Specific Secrets
+```bash
+# Search across all namespaces
+secrethor-cli secrets search my-secret-name --namespace all
+
+# Search in specific namespace
+secrethor-cli secrets search my-secret-name --namespace default
+```
+
+### Output Format Examples
+```bash
+# Table output (default)
+secrethor-cli secrets orphan --output table
+
+# JSON output
+secrethor-cli secrets orphan --output json
+
+# YAML output
+secrethor-cli secrets orphan --output yaml
+```
+
 
 ## Example Output
 
@@ -100,19 +162,51 @@ Summary
 
 ```
 .
-├── cmd/                # CLI commands (orphan, search, etc)
-├── internal/secrethor/ # Core logic used by CLI
-├── main.go             # Entry point
-└── README.md
+├── CHANGELOG.md
+├── README.md
+├── cmd
+│   ├── expired_
+│   ├── orphan.go
+│   ├── root.go
+│   ├── search.go
+│   ├── secrets.go
+│   └── version.go
+├── go.mod
+├── go.sum
+├── internal
+│   └── secrethor
+│       ├── banner.go
+│       ├── expired_
+│       ├── orphan.go
+│       ├── search.go
+│       └── utils.go
+├── main.go
+└── makefile
+
+4 directories, 17 files
+
 ```
 
 ---
 
 ## Contributing
 
-Pull requests are welcome! Feel free to open issues for bugs or features.
+We welcome contributions! Here's how you can help:
+
+- Report bugs by opening issues
+- Suggest new features
+- Submit pull requests
+- Improve documentation
+
+Please ensure your commits follow conventional commit format for automatic versioning.
 
 ---
 
-Built by [Milton Lima de Jesus](https://github.com/miltlima)
+## License
+
+MIT License - see LICENSE file for details.
+
+---
+
+Built with ❤️ by [Milton Lima de Jesus](https://github.com/miltlima)
 
