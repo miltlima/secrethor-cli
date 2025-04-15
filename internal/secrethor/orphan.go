@@ -13,8 +13,6 @@ import (
 	"k8s.io/client-go/tools/clientcmd"
 )
 
-var version = "v0.0.1"
-
 type UsedSecret struct {
 	Namespace string
 	Name      string
@@ -22,8 +20,8 @@ type UsedSecret struct {
 }
 
 type OrphanedSecret struct {
-	Namespace string
-	Name      string
+	Namespace string `json:"namespace" yaml:"namespace"`
+	Name      string `json:"name" yaml:"name"`
 }
 
 func Check(namespace string, output string, verbose bool) error {
@@ -66,8 +64,7 @@ func Check(namespace string, output string, verbose bool) error {
 				metas = append(metas, d.ObjectMeta)
 			}
 			return specs, metas, nil
-		},
-		},
+		}},
 		{"StatefulSets", func() ([]v1.PodSpec, []metav1.ObjectMeta, error) {
 			list, err := clientset.AppsV1().StatefulSets(targetNamespace).List(ctx, metav1.ListOptions{})
 			if err != nil {
@@ -79,8 +76,7 @@ func Check(namespace string, output string, verbose bool) error {
 				metas = append(metas, s.ObjectMeta)
 			}
 			return specs, metas, nil
-		},
-		},
+		}},
 		{"DaemonSets", func() ([]v1.PodSpec, []metav1.ObjectMeta, error) {
 			list, err := clientset.AppsV1().DaemonSets(targetNamespace).List(ctx, metav1.ListOptions{})
 			if err != nil {
@@ -118,8 +114,7 @@ func Check(namespace string, output string, verbose bool) error {
 				metas = append(metas, cj.ObjectMeta)
 			}
 			return specs, metas, nil
-		},
-		},
+		}},
 		{"Jobs", func() ([]v1.PodSpec, []metav1.ObjectMeta, error) {
 			list, err := clientset.BatchV1().Jobs(targetNamespace).List(ctx, metav1.ListOptions{})
 			if err != nil {
@@ -131,8 +126,7 @@ func Check(namespace string, output string, verbose bool) error {
 				metas = append(metas, j.ObjectMeta)
 			}
 			return specs, metas, nil
-		},
-		},
+		}},
 		{"Pods", func() ([]v1.PodSpec, []metav1.ObjectMeta, error) {
 			list, err := clientset.CoreV1().Pods(targetNamespace).List(ctx, metav1.ListOptions{})
 			if err != nil {
@@ -144,8 +138,7 @@ func Check(namespace string, output string, verbose bool) error {
 				metas = append(metas, p.ObjectMeta)
 			}
 			return specs, metas, nil
-		},
-		},
+		}},
 	}
 
 	for _, w := range workloads {
@@ -167,18 +160,22 @@ func Check(namespace string, output string, verbose bool) error {
 		key := fmt.Sprintf("%s/%s", s.Namespace, s.Name)
 		if refs, ok := usedSecrets[key]; ok {
 			usedList = append(usedList, UsedSecret{
-				Namespace: "🔒  " + s.Namespace,
+				Namespace: s.Namespace,
 				Name:      s.Name,
 				UsedBy:    refs,
 			})
 			usedCount++
 		} else {
 			orphanedList = append(orphanedList, OrphanedSecret{
-				Namespace: "❗  " + s.Namespace,
+				Namespace: s.Namespace,
 				Name:      s.Name,
 			})
 			orphanedCount++
 		}
+	}
+
+	if output == "json" || output == "yaml" {
+		return printOrphaned(orphanedList, output)
 	}
 
 	if len(usedList) > 0 {
@@ -194,7 +191,7 @@ func Check(namespace string, output string, verbose bool) error {
 		table.SetHeaderAlignment(tablewriter.ALIGN_LEFT)
 		table.SetColumnAlignment([]int{tablewriter.ALIGN_LEFT, tablewriter.ALIGN_LEFT, tablewriter.ALIGN_LEFT})
 		for _, s := range usedList {
-			table.Append([]string{s.Namespace, s.Name, strings.Join(s.UsedBy, ", ")})
+			table.Append([]string{"🔒 " + s.Namespace, s.Name, strings.Join(s.UsedBy, ", ")})
 			table.Append([]string{" ", " ", " "})
 		}
 		table.Render()
@@ -213,7 +210,7 @@ func Check(namespace string, output string, verbose bool) error {
 		orphanTable.SetHeaderAlignment(tablewriter.ALIGN_LEFT)
 		orphanTable.SetColumnAlignment([]int{tablewriter.ALIGN_LEFT, tablewriter.ALIGN_LEFT})
 		for _, o := range orphanedList {
-			orphanTable.Append([]string{o.Namespace, o.Name})
+			orphanTable.Append([]string{"❗ " + o.Namespace, o.Name})
 		}
 		orphanTable.Render()
 	}
