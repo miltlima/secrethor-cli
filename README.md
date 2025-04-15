@@ -207,6 +207,4 @@ Please ensure your commits follow conventional commit format for automatic versi
 MIT License - see LICENSE file for details.
 
 ---
-
 Built with ❤️ by [Milton Lima de Jesus](https://github.com/miltlima)
-
