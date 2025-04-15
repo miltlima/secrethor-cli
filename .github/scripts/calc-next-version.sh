@@ -10,7 +10,7 @@ set -euo pipefail
 git fetch --tags
 
 latest_tag=$(git tag --sort=-v:refname | grep -E '^v?[0-9]+\.[0-9]+\.[0-9]+$' | head -n 1 || echo "v0.0.0")
-clean_tag="${latest_tag#v}"
+clean_tag=$(echo "$latest_tag" | sed 's/^v//')
 
 commits=$(git log "$latest_tag"..HEAD --pretty=format:"%s%n%b")
 

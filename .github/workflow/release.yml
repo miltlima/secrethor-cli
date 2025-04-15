@@ -9,6 +9,9 @@ jobs:
   release:
     name: Semantic Release & Publish
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
 
     steps:
     - name: Checkout code
@@ -20,6 +23,7 @@ jobs:
       uses: actions/setup-go@v4
       with:
         go-version: '1.22'
+        cache: true
 
     - name: Install git-chglog
       run: |
@@ -33,9 +37,30 @@ jobs:
       run: |
         chmod +x .github/scripts/calc-next-version.sh
         bash .github/scripts/calc-next-version.sh
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Generate CHANGELOG
-      run: git-chglog -o CHANGELOG.md ${{ env.RELEASE_VERSIONV }}
+      run: git-chglog -o CHANGELOG.md ${{ env.RELEASE_VERSION }}
+
+    - name: Verify GO modules
+      run: go mod verify
+
+    - name: Build binaries
+      run: |
+        mkdir -p dist
+        GOOS=linux   GOARCH=amd64 go build -ldflags="-X main.version=${{ env.RELEASE_VERSION }}" -o dist/secrethor-cli-linux   ./main.go
+        GOOS=darwin  GOARCH=amd64 go build -ldflags="-X main.version=${{ env.RELEASE_VERSION }}" -o dist/secrethor-cli-darwin  ./main.go
+        GOOS=windows GOARCH=amd64 go build -ldflags="-X main.version=${{ env.RELEASE_VERSION }}" -o dist/secrethor-cli.exe     ./main.go
+
+        # Create archives in dist directory
+        cd dist
+        zip -r secrethor-cli-windows.zip secrethor-cli.exe
+        tar -czf secrethor-cli-linux.tar.gz secrethor-cli-linux
+        tar -czf secrethor-cli-darwin.tar.gz secrethor-cli-darwin
+
+        # Generate checksums
+        sha256sum * > checksums.txt
 
     - name: Commit CHANGELOG and tag
       run: |
@@ -45,16 +70,6 @@ jobs:
         git commit -m "docs(changelog): update CHANGELOG for ${{ env.RELEASE_VERSION }}" || echo "No changes to commit"
         git tag -a "${{ env.RELEASE_VERSION }}" -m "Release ${{ env.RELEASE_VERSION }}"
         git push origin main --tags
-
-    - name: Build binaries
-      run: |
-        mkdir -p dist
-        GOOS=linux   GOARCH=amd64 go build -o dist/secrethor-cli-linux   ./main.go
-        GOOS=darwin  GOARCH=amd64 go build -o dist/secrethor-cli-darwin  ./main.go
-        GOOS=windows GOARCH=amd64 go build -o dist/secrethor-cli.exe     ./main.go
-        cd dist && zip secrethor-cli-windows.zip secrethor-cli.exe
-        cd dist && tar -czf secrethor-cli-linux.tar.gz secrethor-cli-linux
-        cd dist && tar -czf secrethor-cli-darwin.tar.gz secrethor-cli-darwin
 
     - name: Create GitHub Release
       uses: softprops/action-gh-release@v1
@@ -66,5 +81,14 @@ jobs:
           dist/secrethor-cli-linux.tar.gz
           dist/secrethor-cli-darwin.tar.gz
           dist/secrethor-cli-windows.zip
+          dist/checksums.txt
+        draft: false
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: binaries
+        path: dist/*
+        retention-days: 5
