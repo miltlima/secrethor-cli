@@ -1,15 +1,15 @@
-# CHANGELOG
+# Changelog
 
 {{ if .Versions -}}
 {{ range .Versions }}
-## {{ if .Tag.Previous }}[{{ .Tag.Name }}]({{ $.Info.RepositoryURL }}/compare/{{ .Tag.Previous.Name }}...{{ .Tag.Name }}){{ else }}{{ .Tag.Name }}{{ end }} - {{ datetime "2006-01-02" .Tag.Date }}
+## {{ if .Tag.Previous }}[{{ .Tag.Name }}]({{ $.Info.RepositoryURL }}/compare/{{ .Tag.Previous.Name }}...{{ .Tag.Name }}){{ else }}{{ .Tag.Name }}{{ end }}
 
 {{ range .CommitGroups -}}
 ### {{ .Title }}
 
 {{ range .Commits -}}
 * {{ if .Scope }}**{{ .Scope }}:** {{ end }}{{ .Subject }}
-{{- if .Refs }} {{ range .Refs }}[#{{ .Ref }}]({{ $.Info.RepositoryURL }}/issues/{{ .Ref }}) {{ end }}{{ end }}
+{{- if .Refs }} {{ range .Refs }}([#{{ .Ref }}]({{ $.Info.RepositoryURL }}/issues/{{ .Ref }})){{ end }}{{ end }}
 {{ end }}
 {{ end -}}
 
@@ -39,10 +39,15 @@
 {{ end -}}
 {{ end -}}
 {{ end -}}
+
+{{ else }}
+## Initial Release
+
+* First version of Secrethor CLI
+* Features include:
+  * Secret scanning in Kubernetes clusters
+  * Orphaned secrets detection
+  * Colorful ASCII banner support
+  * Table-formatted output
+  * Multiple output format support
 {{ end -}}
-
-{{- else -}}
-### First Release
-
-* Initial Release
-{{- end -}}
