@@ -40,3 +40,9 @@
 {{ end -}}
 {{ end -}}
 {{ end -}}
+
+{{- else -}}
+### First Release
+
+* Initial Release
+{{- end -}}
