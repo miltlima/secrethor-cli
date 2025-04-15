@@ -1,1 +1,37 @@
+style: github
 template: CHANGELOG.tpl.md
+info:
+  title: Changelog
+  repository: https://github.com/secrethor/secrethor-cli
+
+options:
+  commits:
+    filters:
+      Type:
+      - feat
+      - fix
+      - perf
+      - refactor
+      - chore
+  commitGroups:
+    title_maps:
+      feat: Features
+      fix: Bug Fixes
+      perf: Performance Improvements
+      refactor: Code Refactoring
+      chore: Maintenance
+      revert: Reverts
+      docs: Documentation
+      style: Styles
+      test: Tests
+      build: Builds
+      ci: Continuous Integration
+  header:
+    pattern: "^(\\w*)(?:\\(([\\w\\$\\.\\-\\*\\s]*)\\))?\\:\\s(.*)$"
+    pattern_maps:
+    - Type
+    - Scope
+    - Subject
+  notes:
+    keywords:
+    - BREAKING CHANGE
