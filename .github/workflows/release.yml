@@ -25,20 +25,21 @@ jobs:
         go-version: '1.22'
         cache: true
 
+    - name: Calculate next SemVer version
+      id: version
+      run: |
+        chmod +x .github/scripts/calc-next-version.sh
+        bash .github/scripts/calc-next-version.sh
+        echo "NEW_VERSION=${VERSION}" >> $GITHUB_ENV
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
     - name: Install git-chglog
       run: |
         GHCHGLOG_VERSION="0.15.4"
         curl -L https://github.com/git-chglog/git-chglog/releases/download/v${GHCHGLOG_VERSION}/git-chglog_${GHCHGLOG_VERSION}_linux_amd64.tar.gz | tar -xz
         chmod +x git-chglog
         sudo mv git-chglog /usr/local/bin/
-
-    - name: Calculate next SemVer version
-      id: version
-      run: |
-        chmod +x .github/scripts/calc-next-version.sh
-        bash .github/scripts/calc-next-version.sh
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Generate CHANGELOG
       run: |
@@ -58,9 +59,9 @@ jobs:
     - name: Build binaries
       run: |
         mkdir -p dist
-        GOOS=linux   GOARCH=amd64 go build -ldflags="-X main.version=${{ env.RELEASE_VERSION }}" -o dist/secrethor-cli-linux   ./main.go
-        GOOS=darwin  GOARCH=amd64 go build -ldflags="-X main.version=${{ env.RELEASE_VERSION }}" -o dist/secrethor-cli-darwin  ./main.go
-        GOOS=windows GOARCH=amd64 go build -ldflags="-X main.version=${{ env.RELEASE_VERSION }}" -o dist/secrethor-cli.exe     ./main.go
+        GOOS=linux   GOARCH=amd64 go build -ldflags="-X main.version=${{ env.NEW_VERSION }}" -o dist/secrethor-cli-linux   ./main.go
+        GOOS=darwin  GOARCH=amd64 go build -ldflags="-X main.version=${{ env.NEW_VERSION }}" -o dist/secrethor-cli-darwin  ./main.go
+        GOOS=windows GOARCH=amd64 go build -ldflags="-X main.version=${{ env.NEW_VERSION }}" -o dist/secrethor-cli.exe     ./main.go
 
         # Create archives in dist directory
         cd dist
@@ -79,10 +80,10 @@ jobs:
         if git diff --staged --quiet; then
           echo "No changes to commit"
         else
-          git commit -m "docs(changelog): update CHANGELOG for ${{ env.RELEASE_VERSION }}"
+          git commit -m "docs(changelog): update CHANGELOG for ${{ env.NEW_VERSION }}"
         fi
 
-        git tag -a "${{ env.RELEASE_VERSION }}" -m "Release ${{ env.RELEASE_VERSION }}"
+        git tag -a "${{ env.NEW_VERSION }}" -m "Release ${{ env.NEW_VERSION }}"
         git push origin main --tags
 
     - name: Create GitHub Release
@@ -97,6 +98,7 @@ jobs:
           dist/secrethor-cli-windows.zip
           dist/checksums.txt
         draft: false
+        prerelease: false
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
