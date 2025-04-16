@@ -1,3 +1,46 @@
+<p align="center">
+  <img src="assets/images/secrethor-cli-logo.png" alt="Secrethor Logo" width="300"/>
+</p>
+
+<p align="center">
+  <a href="https://opensource.org/licenses/MIT"><img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-yellow.svg"/></a>
+</p>
+
+<p align="center">
+  <!-- License -->
+  <a href="https://opensource.org/licenses/MIT">
+    <img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-yellow.svg"/>
+  </a>
+  <!-- Release -->
+  <a href="https://github.com/miltlima/secrethor-cli/releases">
+    <img alt="GitHub release (latest by date)" src="https://img.shields.io/github/v/release/miltlima/secrethor-cli"/>
+  </a>
+  <!-- Go Version -->
+  <a href="https://golang.org">
+    <img alt="Go Version" src="https://img.shields.io/github/go-mod/go-version/miltlima/secrethor-cli"/>
+  </a>
+  <!-- Build Status -->
+  <a href="https://github.com/miltlima/secrethor-cli/actions/workflows/release.yml">
+    <img alt="Build Status" src="https://github.com/miltlima/secrethor-cli/actions/workflows/release.yml/badge.svg"/>
+  </a>
+  <!-- Go Report Card -->
+  <a href="https://goreportcard.com/report/github.com/miltlima/secrethor-cli">
+    <img alt="Go Report Card" src="https://goreportcard.com/badge/github.com/miltlima/secrethor-cli"/>
+  </a>
+  <!-- Downloads -->
+  <a href="https://github.com/miltlima/secrethor-cli/releases">
+    <img alt="GitHub all releases" src="https://img.shields.io/github/downloads/miltlima/secrethor-cli/total"/>
+  </a>
+  <!-- Last Commit -->
+  <a href="https://github.com/miltlima/secrethor-cli/commits/main">
+    <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/miltlima/secrethor-cli"/>
+  </a>
+  <!-- Open Issues -->
+  <a href="https://github.com/miltlima/secrethor-cli/issues">
+    <img alt="GitHub issues" src="https://img.shields.io/github/issues/miltlima/secrethor-cli"/>
+  </a>
+</p>
+
 # Secrethor CLI
 
 
