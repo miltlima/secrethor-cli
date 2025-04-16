@@ -12,6 +12,14 @@ git fetch --tags
 latest_tag=$(git tag --sort=-v:refname | grep -E '^v?[0-9]+\.[0-9]+\.[0-9]+$' | head -n 1 || echo "v0.0.0")
 clean_tag=$(echo "$latest_tag" | sed 's/^v//')
 
+if [ "$latest_tag" == "v0.0.0" ]; then
+  next_version="v0.1.0"
+  echo "Initial version: $next_version"
+  echo "RELEASE_VERSION=$next_version" >> "$GITHUB_ENV"
+  echo "next_version=$next_version" >> "$GITHUB_OUTPUT"
+  exit 0
+fi
+
 commits=$(git log "$latest_tag"..HEAD --pretty=format:"%s%n%b")
 
 increment="patch"

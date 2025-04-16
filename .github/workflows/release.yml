@@ -30,7 +30,7 @@ jobs:
       run: |
         chmod +x .github/scripts/calc-next-version.sh
         bash .github/scripts/calc-next-version.sh
-        echo "NEW_VERSION=${VERSION}" >> $GITHUB_ENV
+
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -59,9 +59,9 @@ jobs:
     - name: Build binaries
       run: |
         mkdir -p dist
-        GOOS=linux   GOARCH=amd64 go build -ldflags="-X main.version=${{ env.NEW_VERSION }}" -o dist/secrethor-cli-linux   ./main.go
-        GOOS=darwin  GOARCH=amd64 go build -ldflags="-X main.version=${{ env.NEW_VERSION }}" -o dist/secrethor-cli-darwin  ./main.go
-        GOOS=windows GOARCH=amd64 go build -ldflags="-X main.version=${{ env.NEW_VERSION }}" -o dist/secrethor-cli.exe     ./main.go
+        GOOS=linux   GOARCH=amd64 go build -ldflags="-X main.version=${{ env.RELEASE_VERSION }}" -o dist/secrethor-cli-linux   ./main.go
+        GOOS=darwin  GOARCH=amd64 go build -ldflags="-X main.version=${{ env.RELEASE_VERSION }}" -o dist/secrethor-cli-darwin  ./main.go
+        GOOS=windows GOARCH=amd64 go build -ldflags="-X main.version=${{ env.RELEASE_VERSION }}" -o dist/secrethor-cli.exe     ./main.go
 
         # Create archives in dist directory
         cd dist
@@ -80,17 +80,17 @@ jobs:
         if git diff --staged --quiet; then
           echo "No changes to commit"
         else
-          git commit -m "docs(changelog): update CHANGELOG for ${{ env.NEW_VERSION }}"
+          git commit -m "docs(changelog): update CHANGELOG for ${{ env.RELEASE_VERSION }}"
         fi
 
-        git tag -a "${{ env.NEW_VERSION }}" -m "Release ${{ env.NEW_VERSION }}"
+        git tag -a "${{ env.RELEASE_VERSION }}" -m "Release ${{ env.RELEASE_VERSION }}"
         git push origin main --tags
 
     - name: Create GitHub Release
       uses: softprops/action-gh-release@v1
       with:
-        tag_name: ${{ env.NEW_VERSION }}
-        name: Release ${{ env.NEW_VERSION }}
+        tag_name: ${{ env.RELEASE_VERSION }}
+        name: Release ${{ env.RELEASE_VERSION }}
         body_path: CHANGELOG.md
         files: |
           dist/secrethor-cli-linux.tar.gz
