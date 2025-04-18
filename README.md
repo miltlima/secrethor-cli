@@ -4,9 +4,7 @@
 
 <p align="center">
   <!-- License -->
-  <a href="https://opensource.org/licenses/MIT">
-    <img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-yellow.svg"/>
-  </a>
+  <a href="https://www.apache.org/licenses/LICENSE-2.0"><img alt="License: Apache 2.0" src="https://img.shields.io/badge/License-Apache_2.0-blue.svg"/></a>
   <!-- Release -->
   <a href="https://github.com/miltlima/secrethor-cli/releases">
     <img alt="GitHub release (latest by date)" src="https://img.shields.io/github/v/release/miltlima/secrethor-cli"/>
@@ -243,7 +241,7 @@ Please ensure your commits follow conventional commit format for automatic versi
 
 ## License
 
-MIT License - see LICENSE file for details.
+Apache License - see LICENSE file for details.
 
 ---
 Built with ❤️ by [Milton Lima de Jesus](https://github.com/miltlima)
